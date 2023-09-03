@@ -1,5 +1,6 @@
 /*eslint no-var: "off"*/
 import { valueOrDefault } from "chart.js/helpers"
+import { getInterpolatedValues } from "./interpolate"
 
 var defaultOptions = {
   line: {
@@ -153,12 +154,14 @@ export default {
     }
 
     var newEvent = {
-      type: e.original.type == "click" ? "mousemove" : e.original.type, // do not transmit click events to prevent unwanted changing of synced charts. We do need to transmit a event to stop zooming on synced charts however.
+      type: e.original.type === "click" ? "mousemove" : e.original.type, // do not transmit click events to prevent unwanted changing of synced charts. We do need to transmit a event to stop zooming on synced charts however.
       chart: chart,
       x: xScale.getPixelForValue(e.xValue),
       y: e.original.y,
       native: {
         buttons: buttons,
+        // Possible fix
+        // type: e.original.type == "click" ? "mousemove" : e.original.type
       },
       stop: true,
     }
@@ -166,16 +169,15 @@ export default {
   },
 
   afterEvent: function (chart, event) {
-    if (chart.config.options.scales.x.length == 0) {
+    if (chart.config.options.scales.x.length === 0) {
       return
     }
 
-    let e = event.event // eslint-disable-line
+    const e = event.event
 
     var xScaleType = chart.config.options.scales.x.type
 
-    // eslint-disable-next-line
-    if (xScaleType !== "linear" && xScaleType !== "time" && xScaleType !== "category" && xscaleType !== "logarithmic") {
+    if (xScaleType !== "linear" && xScaleType !== "time" && xScaleType !== "category" && xScaleType !== "logarithmic") {
       return
     }
 
@@ -503,29 +505,52 @@ export default {
   },
 
   interpolateValues: function (chart) {
-    for (var chartIndex = 0; chartIndex < chart.data.datasets.length; chartIndex++) {
-      var dataset = chart.data.datasets[chartIndex]
+    const ticks = chart?.scales?.x?.ticks
+    const isNumberTicks = Array.isArray(ticks) && ticks.every(it => typeof it.label === "number")
 
-      var meta = chart.getDatasetMeta(chartIndex)
+    for (let chartIndex = 0; chartIndex < chart.data.datasets.length; chartIndex++) {
+      const dataset = chart.data.datasets[chartIndex]
 
-      var xScale = chart.scales[meta.xAxisID]
-      var xValue = xScale.getValueForPixel(chart.crosshair.x)
+      const meta = chart.getDatasetMeta(chartIndex)
+
+      const xScale = chart.scales[meta.xAxisID]
+      const yScale = chart.scales[meta.yAxisID]
+      const xPixel = chart.crosshair.x
 
       if (meta.hidden || !dataset.interpolate) {
         continue
       }
 
-      var data = dataset.data
-      var index = data.findIndex(function (o) {
-        return o.x >= xValue
-      })
-      var prev = data[index - 1]
-      var next = data[index]
+      const data = dataset.data
 
-      if (chart.data.datasets[chartIndex].steppedLine && prev) {
+      const isCategory = xScale.type === "category"
+      const isStepped = dataset.stepped
+
+      if (isCategory) {
+        const res = getInterpolatedValues({
+          xScale,
+          yScale,
+          xPixelCursor: xPixel,
+          data,
+          ticks,
+          isNumberTicks,
+          isStepped,
+        })
+
+        dataset.interpolatedValue = res.yValueInterpolated
+        continue
+      }
+
+      const xValue = xScale.getValueForPixel(xPixel)
+      const index = data.findIndex(o => o.x >= xValue)
+
+      const prev = data[index - 1]
+      const next = data[index]
+
+      if (isStepped && prev) {
         dataset.interpolatedValue = prev.y
       } else if (prev && next) {
-        var slope = (next.y - prev.y) / (next.x - prev.x)
+        const slope = (next.y - prev.y) / (next.x - prev.x)
         dataset.interpolatedValue = prev.y + (xValue - prev.x) * slope
       } else {
         dataset.interpolatedValue = NaN

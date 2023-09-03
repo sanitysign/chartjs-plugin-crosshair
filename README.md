@@ -5,10 +5,11 @@
     </centering>
 </div>
 
+## This is a fork of [chartjs-plugin-crosshair](https://github.com/abelheinsbroek/chartjs-plugin-crosshair) which supports displaying interpolated values for line charts
 
 [Chart.js](http://www.chartjs.org/) plugin to draw vertical crosshair, zoom, interpolate values and sync chart interactions.
 
-Requires [Chart.js](https://github.com/chartjs/Chart.js/releases) **3.4.0** or later.
+Requires [Chart.js](https://github.com/chartjs/Chart.js/releases) **4.4.0** or later.
 
 ## Documentation
 
@@ -26,7 +27,24 @@ new Chart(ctx, {
     plugins: {
       tooltip: {
         mode: 'interpolate',
-        intersect: false
+        intersect: false,
+        callbacks: {
+          title: ([i]) => {
+            let x = i?.element?.x
+            x = x || x === 0 ? x.toFixed(2) : ""
+  
+            return x
+          },
+          label: i => {
+            let label = i?.dataset?.label || ""
+            if (label) label = `${label}: `
+  
+            let val = i?.element?.y
+            val = val || val === 0 ? val.toFixed(2) : ""
+  
+            return `${label}${val}`
+          },
+        },
       },
       crosshair: {
         line: {

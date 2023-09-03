@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="index.css" />
     <link rel="icon" type="image/ico" href="favicon.ico" />
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+    <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
     <script src="../dist/chartjs-plugin-crosshair.js"></script>
   </head>
   <body>
@@ -28,6 +28,8 @@
     </div>
     <h3>Basic Example</h3>
     <p>Try dragging to zoom in!</p>
+    <div class="chart"><canvas id="chart0"></canvas></div>
+    <p>Now works even with line charts</p>
     <div class="chart"><canvas id="chart1"></canvas></div>
     <h3>Linked Charts</h3>
     <div class="split"><canvas id="chart2"></canvas></div>
@@ -60,28 +62,47 @@
       return dataset
     }
 
-    var chart1 = new Chart(document.getElementById("chart1").getContext("2d"), {
+    const generateLineData = (lines) => {
+      const labels = [1, 2, 3, 4, 5]
+
+      const datasets = lines.map((color) => ({
+        data: labels.map(it => Math.random() * labels.length + it / labels.length),
+        backgroundColor: color,
+        borderColor: color,
+        interpolate: true,
+        label: `I'm ${color}`
+      }))
+
+      return { labels, datasets }
+    }
+
+    const tooltip = {
+      mode: "interpolate",
+      intersect: false,
+      callbacks: {
+        title: ([i]) => {
+          let x = i?.element?.x
+          x = x || x === 0 ? x.toFixed(2) : ""
+
+          return x
+        },
+        label: i => {
+          let label = i?.dataset?.label || ""
+          if (label) label = `${label}: `
+
+          let val = i?.element?.y
+          val = val || val === 0 ? val.toFixed(2) : ""
+
+          return `${label}${val}`
+        },
+      },
+    }
+
+    var chart0 = new Chart(document.getElementById("chart0").getContext("2d"), {
       type: "scatter",
       options: {
         plugins: {
-          crosshair: {
-            sync: {
-              enabled: false,
-            },
-          },
-        },
-
-        tooltips: {
-          mode: "interpolate",
-          intersect: false,
-          callbacks: {
-            title: function (a, d) {
-              return a[0].xLabel.toFixed(2)
-            },
-            label: function (i, d) {
-              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-            },
-          },
+          tooltip,
         },
       },
       data: {
@@ -89,21 +110,25 @@
       },
     })
 
+    var chart1 = new Chart(document.getElementById("chart1").getContext("2d"), {
+      type: "line",
+      options: {
+        plugins: {
+          crosshair: {
+            sync: {
+              enabled: false,
+            },
+          },
+          tooltip,
+        },
+      },
+      data: generateLineData(["red", "green", "blue"]),
+    })
+
     var chart2 = new Chart(document.getElementById("chart2").getContext("2d"), {
       type: "scatter",
       options: {
-        tooltips: {
-          mode: "interpolate",
-          intersect: false,
-          callbacks: {
-            title: function (a, d) {
-              return a[0].xLabel.toFixed(2)
-            },
-            label: function (i, d) {
-              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-            },
-          },
-        },
+        plugins: { tooltip },
       },
       data: {
         datasets: [generateDataset(0, "A", "red")],
@@ -112,18 +137,7 @@
     var chart3 = new Chart(document.getElementById("chart3").getContext("2d"), {
       type: "scatter",
       options: {
-        tooltips: {
-          mode: "interpolate",
-          intersect: false,
-          callbacks: {
-            title: function (a, d) {
-              return a[0].xLabel.toFixed(2)
-            },
-            label: function (i, d) {
-              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-            },
-          },
-        },
+        plugins: { tooltip },
       },
       data: {
         datasets: [generateDataset(1, "B", "green")],
@@ -132,18 +146,7 @@
     var chart4 = new Chart(document.getElementById("chart4").getContext("2d"), {
       type: "scatter",
       options: {
-        tooltips: {
-          mode: "interpolate",
-          intersect: false,
-          callbacks: {
-            title: function (a, d) {
-              return a[0].xLabel.toFixed(2)
-            },
-            label: function (i, d) {
-              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-            },
-          },
-        },
+        plugins: { tooltip },
       },
       data: {
         datasets: [generateDataset(1, "C", "blue")],
@@ -162,18 +165,7 @@
               incrementer: 3, // Defaults to 5 if not included.
             },
           },
-        },
-        tooltips: {
-          mode: "interpolate",
-          intersect: false,
-          callbacks: {
-            title: function (a, d) {
-              return a[0].xLabel.toFixed(2)
-            },
-            label: function (i, d) {
-              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-            },
-          },
+          tooltip,
         },
         animation: {
           duration: 0,
