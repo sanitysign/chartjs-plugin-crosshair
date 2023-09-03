@@ -19,9 +19,12 @@
     "dist/*.js"
   ],
   "scripts": {
-    "build": "gulp build && gulp package"
+    "watch": "gulp build --watch",
+    "build": "gulp build",
+    "build:pack": "gulp build && gulp package"
   },
   "devDependencies": {
+    "eslint": "^8.48.0",
     "eslint-config-chartjs": "^0.3.0",
     "eslint-plugin-es": "^4.1.0",
     "eslint-plugin-html": "^6.0.0",
@@ -44,6 +47,6 @@
     "yargs": "^16.2.0"
   },
   "peerDependencies": {
-    "chart.js": "^4.0.1"
+    "chart.js": "^4.4.0"
   }
 }

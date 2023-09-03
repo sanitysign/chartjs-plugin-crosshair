@@ -1,4 +1,5 @@
 /.vscode
+/.idea
 /bower.json
 /dist
 /node_modules
