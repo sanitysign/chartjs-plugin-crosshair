@@ -1,8 +1,11 @@
 const terser = require('rollup-plugin-terser').terser;
 const pkg = require('./package.json');
 
+let name = pkg.name.split("/")
+name = name.length > 1 ? name[1] : name[0]
+
 const banner = `/*!
- * ${pkg.name} v${pkg.version}
+ * ${name} v${pkg.version}
  * ${pkg.homepage}
  * (c) ${new Date().getFullYear()} Chart.js Contributors
  * Released under the ${pkg.license} license
@@ -23,7 +26,7 @@ module.exports = [
 		input: 'src/index.js',
 		output: {
 			name: 'ChartCrosshair',
-			file: `dist/${pkg.name}.js`,
+			file: `dist/${name}.js`,
 			banner: banner,
 			format: 'umd',
 			indent: false,
@@ -36,7 +39,7 @@ module.exports = [
 		input: 'src/index.js',
 		output: {
 			name: 'ChartCrosshair',
-			file: `dist/${pkg.name}.min.js`,
+			file: `dist/${name}.min.js`,
 			format: 'umd',
 			indent: false,
 			globals: globals,
@@ -54,7 +57,7 @@ module.exports = [
     input: 'src/index.esm.js',
     output: {
       name: 'ChartCrosshair',
-      file: `dist/${pkg.name}.esm.js`,
+      file: `dist/${name}.esm.js`,
       format: 'esm',
       indent: false
     },
