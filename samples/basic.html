@@ -22,18 +22,8 @@
         plugin to draw crosshair lines, interpolate values and zoom
       </div>
       <div class="links">
-        <a
-          class="btn btn-docs"
-          href="https://chartjs-plugin-crosshair.netlify.com"
-        >
-          Documentation
-        </a>
-        <a
-          class="btn btn-gh"
-          href="https://github.com/abelheinsbroek/chartjs-plugin-crosshair"
-        >
-          GitHub
-        </a>
+        <a class="btn btn-docs" href="https://chartjs-plugin-crosshair.netlify.com"> Documentation </a>
+        <a class="btn btn-gh" href="https://github.com/abelheinsbroek/chartjs-plugin-crosshair"> GitHub </a>
       </div>
     </div>
     <h3>Basic Example</h3>
@@ -50,11 +40,11 @@
 
   <script>
     function generateDataset(shift, label, color) {
-      var data = [];
-      var x = 0;
+      var data = []
+      var x = 0
       while (x < 30) {
-        data.push({ x: x, y: Math.sin(shift + x / 3) });
-        x += Math.random();
+        data.push({ x: x, y: Math.sin(shift + x / 3) })
+        x += Math.random()
       }
       var dataset = {
         backgroundColor: color,
@@ -65,9 +55,9 @@
         label: label,
         data: data,
         lineTension: 0,
-        interpolate: true
-      };
-      return dataset;
+        interpolate: true,
+      }
+      return dataset
     }
 
     var chart1 = new Chart(document.getElementById("chart1").getContext("2d"), {
@@ -76,34 +66,28 @@
         plugins: {
           crosshair: {
             sync: {
-              enabled: false
-            }
-          }
+              enabled: false,
+            },
+          },
         },
 
         tooltips: {
           mode: "interpolate",
           intersect: false,
           callbacks: {
-            title: function(a, d) {
-              return a[0].xLabel.toFixed(2);
+            title: function (a, d) {
+              return a[0].xLabel.toFixed(2)
             },
-            label: function(i, d) {
-              return (
-                d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-              );
-            }
-          }
-        }
+            label: function (i, d) {
+              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
+            },
+          },
+        },
       },
       data: {
-        datasets: [
-          generateDataset(0, "A", "red"),
-          generateDataset(1, "B", "green"),
-          generateDataset(2, "C", "blue")
-        ]
-      }
-    });
+        datasets: [generateDataset(0, "A", "red"), generateDataset(1, "B", "green"), generateDataset(2, "C", "blue")],
+      },
+    })
 
     var chart2 = new Chart(document.getElementById("chart2").getContext("2d"), {
       type: "scatter",
@@ -112,21 +96,19 @@
           mode: "interpolate",
           intersect: false,
           callbacks: {
-            title: function(a, d) {
-              return a[0].xLabel.toFixed(2);
+            title: function (a, d) {
+              return a[0].xLabel.toFixed(2)
             },
-            label: function(i, d) {
-              return (
-                d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-              );
-            }
-          }
-        }
+            label: function (i, d) {
+              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
+            },
+          },
+        },
       },
       data: {
-        datasets: [generateDataset(0, "A", "red")]
-      }
-    });
+        datasets: [generateDataset(0, "A", "red")],
+      },
+    })
     var chart3 = new Chart(document.getElementById("chart3").getContext("2d"), {
       type: "scatter",
       options: {
@@ -134,21 +116,19 @@
           mode: "interpolate",
           intersect: false,
           callbacks: {
-            title: function(a, d) {
-              return a[0].xLabel.toFixed(2);
+            title: function (a, d) {
+              return a[0].xLabel.toFixed(2)
             },
-            label: function(i, d) {
-              return (
-                d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-              );
-            }
-          }
-        }
+            label: function (i, d) {
+              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
+            },
+          },
+        },
       },
       data: {
-        datasets: [generateDataset(1, "B", "green")]
-      }
-    });
+        datasets: [generateDataset(1, "B", "green")],
+      },
+    })
     var chart4 = new Chart(document.getElementById("chart4").getContext("2d"), {
       type: "scatter",
       options: {
@@ -156,21 +136,19 @@
           mode: "interpolate",
           intersect: false,
           callbacks: {
-            title: function(a, d) {
-              return a[0].xLabel.toFixed(2);
+            title: function (a, d) {
+              return a[0].xLabel.toFixed(2)
             },
-            label: function(i, d) {
-              return (
-                d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-              );
-            }
-          }
-        }
+            label: function (i, d) {
+              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
+            },
+          },
+        },
       },
       data: {
-        datasets: [generateDataset(1, "C", "blue")]
-      }
-    });
+        datasets: [generateDataset(1, "C", "blue")],
+      },
+    })
 
     var chart5 = new Chart(document.getElementById("chart5").getContext("2d"), {
       type: "scatter",
@@ -178,50 +156,44 @@
         plugins: {
           crosshair: {
             sync: {
-              enabled: false
+              enabled: false,
             },
             pan: {
-              incrementer: 3 // Defaults to 5 if not included.
-            }
-          }
+              incrementer: 3, // Defaults to 5 if not included.
+            },
+          },
         },
         tooltips: {
           mode: "interpolate",
           intersect: false,
           callbacks: {
-            title: function(a, d) {
-              return a[0].xLabel.toFixed(2);
+            title: function (a, d) {
+              return a[0].xLabel.toFixed(2)
             },
-            label: function(i, d) {
-              return (
-                d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
-              );
-            }
-          }
+            label: function (i, d) {
+              return d.datasets[i.datasetIndex].label + ": " + i.yLabel.toFixed(2)
+            },
+          },
         },
         animation: {
-          duration: 0
+          duration: 0,
         },
 
-        responsiveAnimationDuration: 0
+        responsiveAnimationDuration: 0,
       },
       data: {
-        datasets: [
-          generateDataset(0, "A", "red"),
-          generateDataset(1, "B", "green"),
-          generateDataset(2, "C", "blue")
-        ]
-      }
-    });
+        datasets: [generateDataset(0, "A", "red"), generateDataset(1, "B", "green"), generateDataset(2, "C", "blue")],
+      },
+    })
 
-    var panZoom = function(e) {
+    var panZoom = function (e) {
       if (e.keyCode === 37) {
-        chart5.panZoom(-5);
+        chart5.panZoom(-5)
       } else if (e.keyCode === 39) {
-        chart5.panZoom(5);
+        chart5.panZoom(5)
       }
-    };
+    }
 
-    window.addEventListener("keydown", panZoom);
+    window.addEventListener("keydown", panZoom)
   </script>
 </html>
